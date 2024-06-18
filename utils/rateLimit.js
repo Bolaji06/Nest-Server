@@ -16,7 +16,7 @@ export const loginRateLimit = rateLimiter({
     max: 4,
     message: {
         success: false,
-        message: 'too many registration attempts'
+        message: 'too many login attempts'
     },
     headers: true,
 })
