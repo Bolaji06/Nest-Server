@@ -25,6 +25,9 @@ app.use(cors({
  }));
 
 app.use("/api/auth", auth);
+app.get('/', (req, res) => {
+    res.send('Welcome to the homepage')
+})
 
 app.listen(PORT, () => {
     console.log('Server starting at '+ PORT);
