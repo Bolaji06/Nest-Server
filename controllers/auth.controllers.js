@@ -112,7 +112,7 @@ export async function login(req, res) {
           maxAge: ms("1d"),
           signed: true,
           httpOnly: true,
-          //secure: true
+          //secure: true // enable this in prod
         })
         .status(200)
         .json({ success: true, message: "login successful" });
@@ -122,7 +122,6 @@ export async function login(req, res) {
         .json({ success: false, message: "invalid email or password" });
     }
   } catch (err) {
-    
     res.status(500).json({ success: false, message: "internal server error" });
   }
 }
@@ -148,6 +147,10 @@ export function logout(req, res) {
  */
 export async function verifyEmail(req, res) {
   const { token } = req.body;
+
+  if (!token){
+    res.status(400).json({ success: false, message: 'token is unavailable' })
+  }
 
   try {
     const user = await prisma.user.findUnique({
