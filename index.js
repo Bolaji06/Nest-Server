@@ -1,5 +1,6 @@
 import "dotenv/config";
 import auth from './routes/auth.js'
+import user from './routes/user.js'
 import express from 'express';
 import cors from 'cors'
 
@@ -25,6 +26,9 @@ app.use(cors({
  }));
 
 app.use("/api/auth", auth);
+app.use("/api/user", user);
+
+
 app.get('/', (req, res) => {
     res.send('Welcome to the homepage')
 })
