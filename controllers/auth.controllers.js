@@ -87,16 +87,20 @@ export async function login(req, res) {
         email: email,
       },
     });
+    const {
+       password: userPassword,
+       emailToken,
+       passwordResetToken,
+       passwordExpiry,
+       ...userDetails 
+      } = user
     const dbPassword = user.password;
     const comparePassword = await bcrypt.compare(password, dbPassword);
 
-    const emailPayLoad = user.email;
-    const usernamePayload = user.username;
-
     const jwtToken = jwt.sign(
-      { emailPayLoad, usernamePayload },
-      process.env.TOKEN_SECRET,
-      { algorithm: "HS256" }
+      userDetails,
+      process.env.TOKEN_SECRET
+      
     );
 
     if (user.emailToken) {
@@ -115,7 +119,7 @@ export async function login(req, res) {
           //secure: true // enable this in prod
         })
         .status(200)
-        .json({ success: true, message: "login successful" });
+        .json({ success: true, jwtToken, message: "login successful" });
     } else {
       return res
         .status(400)
@@ -210,7 +214,7 @@ export async function forgotPassword(req, res) {
     const subject = "Password Reset";
     const title = "Password Reset";
     const message= "You're receiving this email because your password is about to be reset";
-    const html = `<a href="https://localhost:7000/reset-password?token=${token}&expiry=${expiry}">
+    const html = `<a href="https://localhost:3000/?reset=${token}&expiry=${expiry}">
           <button>Verify Email</button>
         </a>`;
     sendEmail({ email, subject, message, html, title });
@@ -227,14 +231,18 @@ export async function forgotPassword(req, res) {
  * @param {import("express").Response} res
  */
 export async function resetPassword(req, res) {
-  const { password, resetToken } = req.body;
+  const { password, token } = req.body;
 
   try {
     const user = await prisma.user.findUnique({
       where: {
-        passwordResetToken: resetToken,
+        passwordResetToken: token,
       },
     });
+
+    if (token !== user.passwordResetToken){
+      return res.status(400).json({ success: false, message: 'invalid token' });
+    }
 
     if (!user) {
       return res

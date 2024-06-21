@@ -13,6 +13,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Type {
+  buy
+  rent
+}
+
+enum Property {
+  apartment
+  house
+  condo
+  land
+}
 model User {
   id                    String @id @default(auto()) @map("_id") @db.ObjectId
   username              String @unique
@@ -23,4 +34,23 @@ model User {
   emailToken            String? @unique
   passwordResetToken    String? @unique
   passwordExpiry        DateTime?
+  post                  Post[]
+}
+
+model Post {
+  id                    String @id @default(auto()) @map("_id") @db.ObjectId
+  title                 String
+  price                 Int
+  images                String[]
+  address               String
+  city                  String
+  bedroom               Int
+  bathroom              Int
+  logitude              String
+  latitude              String
+  type                  Type
+  property              Property
+  createdAt             DateTime @default(now())
+  userId                String @db.ObjectId
+  user                  User @relation(fields: [userId], references: [id])
 }
