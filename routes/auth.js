@@ -13,7 +13,7 @@ const router = express.Router();
 
 router.post("/register", registerRateLimit, register);
 
-router.post("/login", loginRateLimit, login);
+router.post("/login", login);
 
 router.post("/logout", logout);
 
