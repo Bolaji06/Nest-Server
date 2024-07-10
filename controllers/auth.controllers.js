@@ -19,8 +19,13 @@ export async function register(req, res) {
   const { email, username, password } = req.body;
 
   // validate user inputs
-  if (!email || !username || !password){
-    return res.status(400).json({ success: false, message: 'email, username and password field is required'})
+  if (!email || !username || !password) {
+    return res
+      .status(400)
+      .json({
+        success: false,
+        message: "email, username and password field is required",
+      });
   }
   const emailToken = emailVerificationToken();
   const saltRounds = 10;
@@ -68,7 +73,7 @@ export async function register(req, res) {
       res.json(400).json({ success: false, message: "fail to create user" });
     }
   } catch (err) {
-   
+    console.log(err);
     res.status(500).json({ success: false, message: "internal server error" });
   }
 }
@@ -88,20 +93,16 @@ export async function login(req, res) {
       },
     });
     const {
-       password: userPassword,
-       emailToken,
-       passwordResetToken,
-       passwordExpiry,
-       ...userDetails 
-      } = user
+      password: userPassword,
+      emailToken,
+      passwordResetToken,
+      passwordExpiry,
+      ...userDetails
+    } = user;
     const dbPassword = user.password;
     const comparePassword = await bcrypt.compare(password, dbPassword);
 
-    const jwtToken = jwt.sign(
-      userDetails,
-      process.env.TOKEN_SECRET
-      
-    );
+    const jwtToken = jwt.sign(userDetails, process.env.TOKEN_SECRET);
 
     if (user.emailToken) {
       return res
@@ -111,7 +112,7 @@ export async function login(req, res) {
 
     if (user.email && comparePassword) {
       // res.status(200).json({ success: true, token: jwtToken, message: 'login successful' })
-     return res
+      return res
         .cookie("token", jwtToken, {
           maxAge: ms("1d"),
           signed: true,
@@ -126,6 +127,7 @@ export async function login(req, res) {
         .json({ success: false, message: "invalid email or password" });
     }
   } catch (err) {
+    console.log(err);
     res.status(500).json({ success: false, message: "internal server error" });
   }
 }
@@ -141,7 +143,6 @@ export function logout(req, res) {
     .clearCookie("token")
     .status(200)
     .json({ success: true, message: "logout successful" });
-  // route user to login
 }
 
 /**
@@ -152,12 +153,12 @@ export function logout(req, res) {
 export async function verifyEmail(req, res) {
   const { token } = req.body;
 
-  if (!token){
-    res.status(400).json({ success: false, message: 'token is unavailable' })
+  if (!token) {
+    res.status(400).json({ success: false, message: "token is unavailable" });
   }
 
   try {
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findFirst({
       where: {
         emailToken: token,
       },
@@ -180,7 +181,7 @@ export async function verifyEmail(req, res) {
         .json({ success: true, message: "email verification successful" });
     }
   } catch (err) {
-   
+    console.log(err);
     return res
       .status(500)
       .json({ success: false, message: "internal server error" });
@@ -197,11 +198,12 @@ export async function forgotPassword(req, res) {
   const { token, expiry } = passwordResetVerification();
 
   try {
+    
     const user = await prisma.user.findUnique({
       where: {
-        email: email,
-      },
-    });
+        email: email
+      }
+    })
     if (!user) {
       return res
         .status(404)
@@ -213,15 +215,17 @@ export async function forgotPassword(req, res) {
     });
     const subject = "Password Reset";
     const title = "Password Reset";
-    const message= "You're receiving this email because your password is about to be reset";
+    const message =
+      "You're receiving this email because your password is about to be reset";
     const html = `<a href="https://localhost:3000/?reset=${token}&expiry=${expiry}">
           <button>Verify Email</button>
         </a>`;
     sendEmail({ email, subject, message, html, title });
     res.status(200).json({ success: true, message: "email sent" });
   } catch (err) {
-    
-    return res.status(500).json({ success: false, message: "internal server error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "internal server error" });
   }
 }
 
@@ -234,14 +238,14 @@ export async function resetPassword(req, res) {
   const { password, token } = req.body;
 
   try {
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findFirst({
       where: {
         passwordResetToken: token,
       },
     });
 
-    if (token !== user.passwordResetToken){
-      return res.status(400).json({ success: false, message: 'invalid token' });
+    if (token !== user.passwordResetToken) {
+      return res.status(400).json({ success: false, message: "invalid token" });
     }
 
     if (!user) {
@@ -272,9 +276,8 @@ export async function resetPassword(req, res) {
       .status(200)
       .json({ success: true, message: "password reset successfully" });
   } catch (err) {
-   
-      return res
-        .status(500)
-        .json({ success: false, message: "internal server error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "internal server error" });
   }
 }

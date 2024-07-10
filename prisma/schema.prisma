@@ -18,6 +18,14 @@ enum Type {
   rent
 }
 
+enum UserType {
+  renter
+  rentee
+  home_seller
+  home_buyer
+  other
+}
+
 enum Property {
   apartment
   house
@@ -26,18 +34,19 @@ enum Property {
 }
 model User {
   id                    String @id @default(auto()) @map("_id") @db.ObjectId
+  userType              UserType @default(other)
   username              String @unique
   email                 String @unique
   password              String
   avatar                String?
   createdAt             DateTime @default(now())
-  emailToken            String? @unique
-  passwordResetToken    String? @unique
+  emailToken            String?
+  passwordResetToken    String?
   passwordExpiry        DateTime?
   post                  Post[]
   savedPost             SavedPost[]
-  chat                  Chat[]
-  messages              Messages[]
+  chat                  Chat[] @relation(fields: [chatId], references: [id])
+  chatId                String[] @db.ObjectId
   
 }
 
@@ -52,8 +61,8 @@ model Post {
   bathroom              Int
   logitude              String
   latitude              String
-  type                  Type
-  property              Property
+  type                  Type @default(buy)
+  property              Property @default(house)
   createdAt             DateTime @default(now())
   user                  User @relation(fields: [userId], references: [id])
   userId                String @db.ObjectId
@@ -63,16 +72,9 @@ model Post {
 
 model PostDetails {
  id                     String @id @default(auto()) @map("_id") @db.ObjectId
- description            String
- utilities              String
- pets                   String
- income                 String
- size                   String
- school                 String
- bus                    String
- restaurant             String
+ description            String?
  post                   Post @relation(fields: [postDetailsId], references: [id])
- postDetailsId          String @db.ObjectId
+ postDetailsId          String @db.ObjectId @unique
 }
 
 model SavedPost {
@@ -82,26 +84,26 @@ model SavedPost {
   post                  Post @relation(fields: [postId], references: [id])
   postId                String @db.ObjectId
   createdAt             DateTime @default(now())
+
+  @@unique([userId, postId])
 }
 
 model Chat {
   id                    String @id @default(auto()) @map("_id") @db.ObjectId
-  user                  User @relation(fields: [chatId], references: [id])
-  chatId                String[] @db.ObjectId
-  seenBy                String[]
+  user                  User[] @relation(fields: [userId], references: [id])
+  userId                String[] @db.ObjectId
+  seenBy                String[] @db.ObjectId
   lastMessage           String[]
-  createdAt             DateTime
+  createdAt             DateTime @default(now())
   messages              Messages[]
 
 }
-
 model Messages {
   id                    String @id @default(auto()) @map("_id") @db.ObjectId
-  user                  User @relation(fields: [userId], references: [id])
-  userId                String @db.ObjectId
-  chat                  Chat @relation(fields: [chatId], references: [id])
+  userId                String
+  chat                  Chat @relation(fields: [chatId], references: [id], onDelete: Cascade)
   chatId                String @db.ObjectId
-  text                  String
+  text                  String?
   createdAt             DateTime @default(now())
 }
 

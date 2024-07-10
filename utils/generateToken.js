@@ -5,6 +5,7 @@ export function emailVerificationToken(){
     return token;
 }
 
+
 export function passwordResetVerification(){
     const expiry = new Date(Date.now() + 3600000);
     return {
