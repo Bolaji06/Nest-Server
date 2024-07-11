@@ -11,7 +11,6 @@ import cors from "cors";
 
 import cookieParser from "cookie-parser";
 
-import EventEmitter from "node:events";
 
 const PORT = 7000;
 const app = express();
