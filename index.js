@@ -11,7 +11,6 @@ import cors from "cors";
 
 import cookieParser from "cookie-parser";
 
-
 const PORT = 7000;
 const app = express();
 app.use(cookieParser(process.env.TOKEN_SECRET));
@@ -36,7 +35,7 @@ app.use("/api/auth", auth);
 app.use("/api/user", user);
 app.use("/api/post", post);
 app.use("/api/chat", chat);
-app.use("/api/message", message)
+app.use("/api/message", message);
 
 app.get("/", (req, res) => {
   res.send("Welcome to the homepage");

@@ -3,7 +3,7 @@
 import prisma from "../lib/prisma.js";
 import jwt from "jsonwebtoken";
 import { marked } from "marked";
-import sanitize from 'sanitize-html';
+import sanitize from "sanitize-html";
 
 /**
  *
@@ -17,6 +17,7 @@ export async function getPosts(req, res) {
       where: {
         city: query.city || undefined,
         type: query.type || undefined,
+        title: query.title || undefined,
         property: query.property || undefined,
         price: {
           gte: parseInt(query.min_price) || 0,
@@ -45,7 +46,7 @@ export async function getPost(req, res) {
         id: id,
       },
       include: {
-        postDetails: true,
+        // postDetails: true,
         user: {
           select: {
             username: true,
@@ -97,19 +98,13 @@ export async function addPost(req, res) {
 
   const postDescription = postDetails?.description[0];
 
-  const html = marked.parse(postDescription);
-  const sanitizeHtml = sanitize(html);
+  const sanitizeHtml = sanitize(postDescription);
 
   try {
-   const newPost = await prisma.post.create({
+    const newPost = await prisma.post.create({
       data: {
-        ...body.postData,
+        ...body,
         userId: tokenId,
-        postDetails: {
-          create: {
-            description: html ? sanitizeHtml : postDescription
-          }
-        },
       },
     });
     res.status(201).json({ success: true, newPost });
@@ -189,6 +184,20 @@ export async function deletePost(req, res) {
   } catch (err) {
     console.log(err);
     res.status(500).json({ success: false, message: "internal server error" });
+  }
+}
+
+/**
+ *
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ */
+export async function deleteAllPost(req, res) {
+  try {
+    const post = await prisma.post.deleteMany();
+    res.status(200).json({ message: true, post });
+  } catch (err) {
+    console.log(err);
   }
 }
 //delete post
