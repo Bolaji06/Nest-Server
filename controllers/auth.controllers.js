@@ -20,12 +20,10 @@ export async function register(req, res) {
 
   // validate user inputs
   if (!email || !username || !password) {
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message: "email, username and password field is required",
-      });
+    return res.status(400).json({
+      success: false,
+      message: "email, username and password field is required",
+    });
   }
   const emailToken = emailVerificationToken();
   const saltRounds = 10;
@@ -92,6 +90,9 @@ export async function login(req, res) {
         email: email,
       },
     });
+    if (!user){
+      return res.status(404).json({ success: false, message: 'user with email not found '})
+    }
     const {
       password: userPassword,
       emailToken,
@@ -124,7 +125,7 @@ export async function login(req, res) {
     } else {
       return res
         .status(400)
-        .json({ success: false, message: "invalid email or password" });
+        .json({ success: false, message: "invalid password" });
     }
   } catch (err) {
     console.log(err);
@@ -198,12 +199,11 @@ export async function forgotPassword(req, res) {
   const { token, expiry } = passwordResetVerification();
 
   try {
-    
     const user = await prisma.user.findUnique({
       where: {
-        email: email
-      }
-    })
+        email: email,
+      },
+    });
     if (!user) {
       return res
         .status(404)

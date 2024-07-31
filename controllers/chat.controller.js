@@ -17,23 +17,22 @@ export async function getChats(req, res) {
     },
   });
 
-  for (let chat of chats){
+  for (let chat of chats) {
     const receiverId = chat.userId.find((id) => id !== tokenId);
 
     const receiver = await prisma.user.findUnique({
       where: {
-        id: receiverId
+        id: receiverId,
       },
       select: {
         id: true,
         username: true,
         avatar: true,
-      }
-    })
+      },
+    });
     chat.receiver = receiver;
   }
 
-  
   res.status(200).json({ success: true, result: chats });
   try {
   } catch (err) {
