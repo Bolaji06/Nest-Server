@@ -219,7 +219,7 @@ export async function getSavedPost(req, res) {
 
   try {
     if (!token){
-      return res.status(503).json({ success: false, message: 'forbidden' });
+      return res.status(401).json({ success: false, message: 'unauthorize' });
     }
     const savedPost = await prisma.savedPost.findUnique({
       where: {
