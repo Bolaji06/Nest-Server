@@ -56,6 +56,8 @@ export async function getPost(req, res) {
       },
     });
 
+    //const savedPost = await prisma.savedPost.findMany({});
+
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
 
@@ -72,9 +74,10 @@ export async function getPost(req, res) {
               },
             },
           });
-          return res
-            .status(200)
-            .json({ ...post, isSaved: saved ? true : false });
+          return res.status(200).json({
+            success: true,
+            message: { ...post, isSaved: saved ? true : false },
+          });
         }
       });
     } else {
@@ -200,4 +203,45 @@ export async function deleteAllPost(req, res) {
     console.log(err);
   }
 }
-//delete post
+
+//////////////////
+//  SAVED POST  //
+/////////////////
+
+/**
+ * 
+ * @param {import("express").Request} req 
+ * @param {import("express").Response} res 
+ */
+export async function getSavedPost(req, res) {
+  const token = req.user.id;
+  const id = req.params.id
+
+  try {
+    if (!token){
+      return res.status(503).json({ success: false, message: 'forbidden' });
+    }
+    const savedPost = await prisma.savedPost.findUnique({
+      where: {
+        userId_postId: {
+          userId: token,
+          postId: id
+        }
+      }
+    })
+    return res.status(200).json({ success: true, message: savedPost });
+
+  }catch(error){
+    console.log(error);
+    return res.status(500).json({ success: false, message: 'internal server error' });
+  }
+}
+
+/**
+ * 
+ * @param {import("express").Request} req 
+ * @param {import("express").Response} res 
+ */
+export async function addSavedPost(req, res){
+
+}
