@@ -8,6 +8,7 @@ import {
   deletePost,
   updatePost,
   deleteAllPost,
+  getSavedPost,
 } from "../controllers/post.controller.js";
 
 const router = express.Router();
@@ -18,5 +19,7 @@ router.post("/", userAuthorization, addPost);
 router.delete("/:id", userAuthorization, deletePost);
 router.patch("/:id", userAuthorization, updatePost);
 router.delete("/", deleteAllPost);
+router.get("/save/:id", userAuthorization, getSavedPost);
+
 
 export default router;
