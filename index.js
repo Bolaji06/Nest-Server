@@ -5,6 +5,7 @@ import user from "./routes/user.js";
 import post from "./routes/post.js";
 import chat from "./routes/chat.js";
 import message from "./routes/message.js";
+import save from "./routes/save_post.js";
 
 import express from "express";
 import cors from "cors";
@@ -36,6 +37,7 @@ app.use("/api/user", user);
 app.use("/api/post", post);
 app.use("/api/chat", chat);
 app.use("/api/message", message);
+app.use("/api/save-post", save);
 
 app.get("/", (req, res) => {
   res.send("Welcome to the homepage");
