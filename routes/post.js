@@ -19,5 +19,4 @@ router.delete("/:id", userAuthorization, deletePost);
 router.patch("/:id", userAuthorization, updatePost);
 router.delete("/", deleteAllPost);
 
-
 export default router;
