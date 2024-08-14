@@ -5,14 +5,32 @@ import jwt from "jsonwebtoken";
 import { marked } from "marked";
 import sanitize from "sanitize-html";
 
+import { Type, Property } from "@prisma/client";
+
 /**
  *
  * @param {import("express").Request} req
  * @param {import("express").Response} res
+ * @param {Object} req.query
  */
 export async function getPosts(req, res) {
   const query = req.query;
+
   try {
+    if (query.title){
+      console.log(query.title);
+
+      const searchPost = await prisma.post.findMany({
+        where: {
+          title: {
+            contains: query.title,
+            mode: "insensitive"
+          }
+        }
+      });
+      return res.status(200).json({ success: true, message: searchPost });
+    }
+   
     const post = await prisma.post.findMany({
       where: {
         city: query.city || undefined,
@@ -26,6 +44,7 @@ export async function getPosts(req, res) {
       },
     });
     res.status(200).json({ success: true, message: post });
+
   } catch (err) {
     console.log(err);
     res.status(500).json({ success: false, message: "internal server error" });

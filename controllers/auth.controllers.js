@@ -2,6 +2,8 @@ import bcrypt from "bcrypt";
 import prisma from "../lib/prisma.js";
 import jwt from "jsonwebtoken";
 
+import { sendWelcomeEmail } from "../utils/welcomeEmail.js";
+
 import {
   emailVerificationToken,
   passwordResetVerification,
@@ -57,15 +59,12 @@ export async function register(req, res) {
       },
     });
 
-    const subject = "Email Verification";
-    const message = "Kindly verify your email by clicking the button below";
-    const html = `<a href="https://localhost:7000/verify-email?token=${emailToken}">
-          <button>Verify Email</button>
-        </a>`;
-    const title = "";
+    const subject = "Welcome to Nest";
+    const html = sendWelcomeEmail(emailToken);
+    sendEmail({ email, subject, html });
 
     if (newUser) {
-      sendEmail({ email, subject, message, html, title });
+      sendEmail({ email, subject, html });
       res.status(201).json({ success: true, message: "verify your email" });
     } else {
       res.json(400).json({ success: false, message: "fail to create user" });
@@ -90,8 +89,10 @@ export async function login(req, res) {
         email: email,
       },
     });
-    if (!user){
-      return res.status(404).json({ success: false, message: 'user with email not found '})
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "user with email not found " });
     }
     const {
       password: userPassword,
@@ -112,7 +113,6 @@ export async function login(req, res) {
     }
 
     if (user.email && comparePassword) {
-      // res.status(200).json({ success: true, token: jwtToken, message: 'login successful' })
       return res
         .cookie("token", jwtToken, {
           maxAge: ms("1d"),
