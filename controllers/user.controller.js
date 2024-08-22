@@ -48,12 +48,45 @@ export async function getUser(req, res) {
 
 /**
  *
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ */
+export async function findUser(req, res) {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json({ success: false, message: "bad request" });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+    return res.status(200).json({ success: true, result: user });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+/**
+ *
  * @param {Request} req
  * @param {Response} res
  */
 export async function updateUser(req, res) {
   const { id } = req.params;
-  const { username, avatar, password, email, userType } = req.body;
+  const {
+    username,
+    firstName,
+    lastName,
+    about,
+    avatar,
+    password,
+    email,
+    userType,
+  } = req.body;
   const tokenId = req.user.id;
   let hashPassword = "";
 
@@ -83,9 +116,12 @@ export async function updateUser(req, res) {
       },
       data: {
         username: username,
+        firstName: firstName,
+        lastName: lastName,
         avatar: avatar,
         password: hashPassword ? hashPassword : user.password,
         email: email,
+        about: about,
         userType: userType,
       },
     });

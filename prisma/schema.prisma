@@ -37,6 +37,9 @@ model User {
   userType              UserType @default(other)
   username              String @unique
   email                 String @unique
+  about                 String?
+  firstName             String?
+  lastName              String?
   password              String
   avatar                String?
   createdAt             DateTime @default(now())
