@@ -32,6 +32,33 @@ enum Property {
   condo
   land
 }
+
+enum Design {
+  bungalow
+  cape_Code
+  Colonial
+  Contemporary
+  Craftsman
+  French
+  Georgian
+  Loft
+  Modern
+  queen_anne
+  ranch
+  pueblo_style
+  Spanish
+  split_level
+  tudor
+  other
+}
+
+enum Basement {
+  finished
+  unfinished
+  partially_finished
+  none
+}
+
 model User {
   id                    String @id @default(auto()) @map("_id") @db.ObjectId
   userType              UserType @default(other)
@@ -72,15 +99,53 @@ model Post {
   userId                String @db.ObjectId
   description           String
   savedPost             SavedPost[]
-  
+  amenities             Amenities?
 }
 
-// model PostDetails {
-//  id                     String @id @default(auto()) @map("_id") @db.ObjectId
-//  description            String?
-//  post                   Post @relation(fields: [postDetailsId], references: [id])
-//  postDetailsId          String @db.ObjectId @unique
-// }
+model Amenities {
+  id                    String @id @default(auto()) @map("_id") @db.ObjectId
+  post                  Post @relation(fields: [postId], references: [id])
+  postId                String @unique @db.ObjectId
+  roomDetails           RoomDetails?
+  utilitiesDetails      UtilitiesDetails?
+  buildingDetails       BuildingDetails?
+}
+
+model RoomDetails {
+  id                    String @id @default(auto()) @map("_id") @db.ObjectId
+  amenities             Amenities  @relation(fields: [amenitiesId], references: [id])
+  amenitiesId           String @unique @db.ObjectId
+  appliances            String[]
+  basement              Basement?
+  floorCovering         String[]
+  rooms                 String[]
+  indoorFeatures        String[]
+}
+
+model UtilitiesDetails {
+  id                    String @id @default(auto()) @map("_id") @db.ObjectId
+  amenities             Amenities?  @relation(fields: [amenitiesId], references: [id])
+  amenitiesId           String @unique @db.ObjectId
+  coolingType           String[]
+  heatingType           String[]
+  heatingFuel           String[]
+}
+
+model BuildingDetails {
+  id                    String @id @default(auto()) @map("_id") @db.ObjectId
+  amenities             Amenities?  @relation(fields: [amenitiesId], references: [id])
+  amenitiesId           String @unique @db.ObjectId
+  buildingAmenities     String[]
+  architecturalStyle    Design
+  exterior              String[]
+  numUnit               Int
+  numFloor              Int
+  outdoorAmenities      String[]
+  parking               String[]
+  parkingSpace          Int
+  roof                  String[]
+  view                  String[]
+}
 
 model SavedPost {
   id                    String @id @default(auto()) @map("_id") @db.ObjectId
