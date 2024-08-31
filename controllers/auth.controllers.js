@@ -61,10 +61,11 @@ export async function register(req, res) {
 
     const subject = "Welcome to Nest";
     const html = sendWelcomeEmail(emailToken);
-    sendEmail({ email, subject, html });
+    const sender = process.env.HOST_EMAIL
+    await sendEmail(email, subject, html, sender);
 
     if (newUser) {
-      sendEmail({ email, subject, html });
+      await sendEmail(email, subject, html, sender);
       res.status(201).json({ success: true, message: "verify your email" });
     } else {
       res.json(400).json({ success: false, message: "fail to create user" });
@@ -213,14 +214,15 @@ export async function forgotPassword(req, res) {
       where: { id: user.id },
       data: { passwordExpiry: expiry, passwordResetToken: token },
     });
+    const sender = process.env.HOST_EMAIL
     const subject = "Password Reset";
-    const title = "Password Reset";
     const message =
       "You're receiving this email because your password is about to be reset";
-    const html = `<a href="https://localhost:3000/?reset=${token}&expiry=${expiry}">
+    const html = `<h2>${message}</h2>
+    <a href="https://localhost:3000/?reset=${token}&expiry=${expiry}">
           <button>Verify Email</button>
         </a>`;
-    sendEmail({ email, subject, message, html, title });
+    await sendEmail(email, subject, html, sender);
     res.status(200).json({ success: true, message: "email sent" });
   } catch (err) {
     return res

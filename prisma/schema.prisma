@@ -86,6 +86,8 @@ model Post {
   price                 Int
   unitArea              Int?
   images                String[]
+  country               String?
+  state                 String?
   address               String
   city                  String
   bedroom               Int
