@@ -26,11 +26,12 @@ export async function shareListingEmail(req, res) {
 
       const html = sendListingEmail(postImage, id, from, to, message, post);
       const shareEmail = await sendEmail(to, subject, html, from );
-      if (shareEmail){
-        return res.status(200).json({ success: true, message: shareEmail })
+      if (!shareEmail){
+        return res.status(400).json({ success: false, message: 'Fail to send email'});
       }
+      return res.status(200).json({ success: true, message: shareEmail });
      
-      return res.status(400).json({ success: false, message: 'Fail to send email' });
+      
     }
   } catch (error) {
     console.log(error);

@@ -27,7 +27,7 @@ export async function sendEmail(receiver, subject, html, sender){
       subject: subject,
       html: html,
     })
-    console.log("Message sent "+ info.messageId)
+    return info.messageId;
     
   }catch(err){
     console.log(err);
