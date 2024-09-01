@@ -17,20 +17,20 @@ export async function getPosts(req, res) {
   const query = req.query;
 
   try {
-    if (query.title){
+    if (query.title) {
       console.log(query.title);
 
       const searchPost = await prisma.post.findMany({
         where: {
           title: {
             contains: query.title,
-            mode: "insensitive"
-          }
-        }
+            mode: "insensitive",
+          },
+        },
       });
       return res.status(200).json({ success: true, message: searchPost });
     }
-   
+
     const post = await prisma.post.findMany({
       where: {
         city: query.city || undefined,
@@ -44,7 +44,6 @@ export async function getPosts(req, res) {
       },
     });
     res.status(200).json({ success: true, message: post });
-
   } catch (err) {
     console.log(err);
     res.status(500).json({ success: false, message: "internal server error" });
@@ -65,13 +64,50 @@ export async function getPost(req, res) {
         id: id,
       },
       include: {
-        // postDetails: true,
         user: {
           select: {
             username: true,
             avatar: true,
           },
         },
+      },
+    });
+
+    const amenities = await prisma.amenities.findUnique({
+      where: {
+        postId: post.id,
+      },
+      include: {
+        roomDetails: {
+          select: {
+            appliances: true,
+            basement: true,
+            floorCovering: true,
+            indoorFeatures: true,
+            rooms: true,
+          }
+        },
+        utilitiesDetails: {
+          select: {
+            coolingType: true,
+            heatingFuel: true,
+            heatingType: true,
+          }
+        },
+        buildingDetails: {
+          select: {
+            architecturalStyle: true,
+            buildingAmenities: true,
+            exterior: true,
+            numFloor: true,
+            numUnit: true,
+            outdoorAmenities: true,
+            parking: true,
+            parkingSpace: true,
+            roof: true,
+            view: true,
+          }
+        }
       },
     });
 
@@ -95,12 +131,14 @@ export async function getPost(req, res) {
           });
           return res.status(200).json({
             success: true,
-            message: { ...post, isSaved: saved ? true : false },
+            message: { post, amenities, isSaved: saved ? true : false },
           });
         }
       });
     } else {
-      return res.status(200).json({ success: true, message: post });
+      return res
+        .status(200)
+        .json({ success: true, message: { post, amenities } });
     }
   } catch (err) {
     console.log(err);
@@ -135,6 +173,33 @@ export async function addPost(req, res) {
     res.status(500).json({ success: false, message: "internal server error" });
   }
 }
+
+/**
+ *
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ */
+export async function getAmenities(req, res) {
+  const { id } = req.params;
+  try {
+    const amenities = await prisma.amenities.findUnique({
+      where: {
+        id: id,
+      },
+      include: {
+        buildingDetails: true,
+        roomDetails: true,
+        utilitiesDetails: true,
+      },
+    });
+    return res.status(200).json({ success: true, message: amenities });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: "internal server error" });
+  }
+}
+
 /**
  *
  * @param {import("express").Request} req
