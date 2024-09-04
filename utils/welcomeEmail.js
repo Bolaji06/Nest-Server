@@ -120,7 +120,7 @@ export function sendListingEmail(image, id, sender, receiver, message, post) {
 
     <mj-section background-color="#ffffff">
       <mj-column>
-        <mj-button background-color="#4CAF50" color="white" href="http://localhost:3000/home-details=${id}">
+        <mj-button background-color="#4CAF50" color="white" href="http://localhost:3000/home-details/${id}">
           View Full Listing
         </mj-button>
       </mj-column>

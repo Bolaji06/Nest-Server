@@ -21,17 +21,16 @@ export async function shareListingEmail(req, res) {
     if (post) {
       const postImage = post.images[0];
 
-      
-      const id = post.id
+      const id = post.id;
 
       const html = sendListingEmail(postImage, id, from, to, message, post);
-      const shareEmail = await sendEmail(to, subject, html, from );
-      if (!shareEmail){
-        return res.status(400).json({ success: false, message: 'Fail to send email'});
+      const shareEmail = await sendEmail(to, subject, html, from);
+      if (!shareEmail) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Fail to send email" });
       }
       return res.status(200).json({ success: true, message: shareEmail });
-     
-      
     }
   } catch (error) {
     console.log(error);

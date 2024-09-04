@@ -67,6 +67,8 @@ model User {
   about                 String?
   firstName             String?
   lastName              String?
+  location              String?
+  phone                 String?
   password              String
   avatar                String?
   createdAt             DateTime @default(now())
