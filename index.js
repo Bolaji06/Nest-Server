@@ -11,12 +11,18 @@ import email from "./routes/email.js";
 import express from "express";
 import timeout from "connect-timeout";
 import cors from "cors";
+import http from 'http';
 
 import cookieParser from "cookie-parser";
+import { WebSocketServer } from "ws";
+import { error } from "console";
 
 const PORT = 7000;
 const app = express();
 const allowedOrigins = [process.env.DEV_CORS_URL, process.env.PROD_CORS_URL];
+
+const server = http.createServer(app);
+const wss = new WebSocketServer({ server })
 
 //app.use(timeout("10s"));
 app.use(cookieParser(process.env.TOKEN_SECRET));
@@ -61,7 +67,35 @@ app.use((err, req, res, next) => {
   //.send("An unexpected error occurred. Please try again later.");
 });
 
-const server = app.listen(PORT, () => {
+wss.on('connection', (ws) => {
+  console.log('Client connected');
+
+ ws.on('message', (message) => {
+  const decodeMessage = message.toString();
+  console.log('Receiving message ', decodeMessage);
+  
+  wss.clients.forEach((client) => {
+    if (client.readyState === ws.OPEN){
+      client.send(decodeMessage);
+    }
+  })
+ })
+
+ ws.on("error", (error) => {
+  console.error('Client error ', error);
+ })
+
+ ws.on('close', () => {
+  console.log('Client disconnected')
+ })
+})
+
+wss.on("error", (err) => {
+  console.log("WebSocket server error ", error);
+})
+
+
+server.listen(PORT, () => {
   console.log("Server starting at " + PORT);
 });
 
