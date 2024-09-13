@@ -61,7 +61,7 @@ export async function register(req, res) {
 
     const subject = "Welcome to Nest";
     const html = sendWelcomeEmail(emailToken);
-    const sender = process.env.HOST_EMAIL
+    const sender = process.env.HOST_EMAIL;
     await sendEmail(email, subject, html, sender);
 
     if (newUser) {
@@ -214,7 +214,7 @@ export async function forgotPassword(req, res) {
       where: { id: user.id },
       data: { passwordExpiry: expiry, passwordResetToken: token },
     });
-    const sender = process.env.HOST_EMAIL
+    const sender = process.env.HOST_EMAIL;
     const subject = "Password Reset";
     const message =
       "You're receiving this email because your password is about to be reset";

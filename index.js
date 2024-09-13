@@ -18,7 +18,7 @@ const PORT = 7000;
 const app = express();
 const allowedOrigins = [process.env.DEV_CORS_URL, process.env.PROD_CORS_URL];
 
-app.use(timeout("6s"));
+//app.use(timeout("10s"));
 app.use(cookieParser(process.env.TOKEN_SECRET));
 app.use(express.json());
 
@@ -65,4 +65,4 @@ const server = app.listen(PORT, () => {
   console.log("Server starting at " + PORT);
 });
 
-server.timeout = 8000;
+//server.timeout = 15000;
