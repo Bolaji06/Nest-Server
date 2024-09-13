@@ -84,7 +84,8 @@ export async function updateUser(req, res) {
     about,
     avatar,
     password,
-    email,
+    location,
+    phone,
     userType,
   } = req.body;
   const tokenId = req.user.id;
@@ -120,7 +121,8 @@ export async function updateUser(req, res) {
         lastName: lastName,
         avatar: avatar,
         password: hashPassword ? hashPassword : user.password,
-        email: email,
+        phone: phone,
+        location: location,
         about: about,
         userType: userType,
       },

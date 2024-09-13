@@ -1,0 +1,129 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "version": "1.0.0",
+      "title": "Real Estate API",
+      "description": "API for real estate listings"
+    },
+    "host": "localhost:3000",
+    "basePath": "/api/post",
+    "schemes": ["http"],
+    "paths": {
+      "/listings": {
+        "get": {
+          "summary": "Get all listings",
+          "description": "Returns a list of all real estate listings",
+          "produces": ["application/json"],
+          "responses": {
+            "200": {
+              "description": "A list of real estate listings",
+              "schema": {
+                "$ref": "#/definitions/ListingResponse"
+              }
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "ListingResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": true
+          },
+          "message": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/Listing"
+            }
+          }
+        }
+      },
+      "Listing": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "66a40544f47b7fafd2380099"
+          },
+          "title": {
+            "type": "string",
+            "example": "Buildable plan: Ivy, Discovery Collection at Union Park"
+          },
+          "price": {
+            "type": "integer",
+            "example": 456678
+          },
+          "unitArea": {
+            "type": "integer",
+            "example": 12323
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "https://firebasestorage.googleapis.com/v0/b/nest-773db.appspot.com/o/posts%2Fb08c0baf61b8e4560559152f893e7cb3-cc_ft_576.webp?alt=media&token=3529a9e2-6043-463b-896d-d707203c223a"
+            }
+          },
+          "country": {
+            "type": "string",
+            "nullable": true,
+            "example": null
+          },
+          "state": {
+            "type": "string",
+            "nullable": true,
+            "example": null
+          },
+          "address": {
+            "type": "string",
+            "example": "Aubrey, TX 76227"
+          },
+          "city": {
+            "type": "string",
+            "example": "Aubrey"
+          },
+          "bedroom": {
+            "type": "integer",
+            "example": 4
+          },
+          "bathroom": {
+            "type": "integer",
+            "example": 4
+          },
+          "longitude": {
+            "type": "string",
+            "example": "23"
+          },
+          "latitude": {
+            "type": "string",
+            "example": "32"
+          },
+          "type": {
+            "type": "string",
+            "example": "buy"
+          },
+          "property": {
+            "type": "string",
+            "example": "house"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-07-26T20:21:21.597Z"
+          },
+          "userId": {
+            "type": "string",
+            "example": "66711e9708f5f107c42ba796"
+          },
+          "description": {
+            "type": "string",
+            "example": "<h2><strong>Bedrooms &amp; bathrooms</strong></h2><ul><li>Bedrooms:&nbsp;4</li><li>Bathrooms:&nbsp;3</li><li>Full bathrooms:&nbsp;2</li><li>1/2 bathrooms:&nbsp;1</li></ul>"
+          }
+        }
+      }
+    }
+  }
+  

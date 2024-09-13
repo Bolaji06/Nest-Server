@@ -1,6 +1,9 @@
 import express from "express";
 import { userAuthorization } from "../utils/authorization.js";
 
+// import swaggerUi from "swagger-ui-express";
+// import swaggerDocument from '../utils/swaggerDocument.json' assert { type: 'json' };
+
 import {
   getPost,
   getPosts,

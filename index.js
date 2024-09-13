@@ -6,20 +6,22 @@ import post from "./routes/post.js";
 import chat from "./routes/chat.js";
 import message from "./routes/message.js";
 import save from "./routes/save_post.js";
-import email from "./routes/email.js"
+import email from "./routes/email.js";
 
 import express from "express";
+import timeout from "connect-timeout";
 import cors from "cors";
 
 import cookieParser from "cookie-parser";
 
 const PORT = 7000;
 const app = express();
-app.use(cookieParser(process.env.TOKEN_SECRET));
+const allowedOrigins = [process.env.DEV_CORS_URL, process.env.PROD_CORS_URL];
 
+//app.use(timeout("10s"));
+app.use(cookieParser(process.env.TOKEN_SECRET));
 app.use(express.json());
 
-const allowedOrigins = [process.env.DEV_CORS_URL, process.env.PROD_CORS_URL];
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -45,6 +47,22 @@ app.get("/", (req, res) => {
   res.send("Welcome to the homepage");
 });
 
-app.listen(PORT, () => {
+function haltRequestOnTimeout(req, res, next) {
+  if (!req.timedout) return next();
+  else {
+    return res.status(503).send("Request timeout");
+  }
+}
+
+app.use((err, req, res, next) => {
+  console.error("Error:", err.message);
+  next();
+  return res.status(503).json({ success: false, message: "request timeout" });
+  //.send("An unexpected error occurred. Please try again later.");
+});
+
+const server = app.listen(PORT, () => {
   console.log("Server starting at " + PORT);
 });
+
+//server.timeout = 15000;

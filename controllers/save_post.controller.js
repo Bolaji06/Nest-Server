@@ -26,7 +26,8 @@ export async function getAllSavedPost(req, res) {
         userId: token,
       },
     });
-    return res.status(201).json({ success: true, message: savedPosts });
+
+    return res.status(200).json({ success: true, message: savedPosts });
   } catch (error) {
     console.log(error);
     return res
