@@ -55,6 +55,44 @@ export async function getPosts(req, res) {
  * @param {import("express").Request} req
  * @param {import("express").Response} res
  */
+export async function getUserPost(req, res) {
+  const tokenId = req.user.id;
+  const param = req.params.userId;
+
+  console.log(tokenId)
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: tokenId,
+      },
+    });
+    if (user.id !== param) {
+      return res
+        .status(404)
+        .json({ success: false, message: "user not found" });
+    }
+    const userPosts = await prisma.post.findMany({
+      where: {
+        userId: user.id,
+      },
+    });
+    return res.status(200).json({ success: true, userPosts });
+  } catch (error) {
+    if (error instanceof error) {
+      console.log(error);
+      return res
+        .status(500)
+        .json({ success: false, message: "internal server error" });
+    }
+  }
+}
+
+/**
+ *
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ */
 export async function getPost(req, res) {
   const id = req.params.id;
 
@@ -85,14 +123,14 @@ export async function getPost(req, res) {
             floorCovering: true,
             indoorFeatures: true,
             rooms: true,
-          }
+          },
         },
         utilitiesDetails: {
           select: {
             coolingType: true,
             heatingFuel: true,
             heatingType: true,
-          }
+          },
         },
         buildingDetails: {
           select: {
@@ -106,8 +144,8 @@ export async function getPost(req, res) {
             parkingSpace: true,
             roof: true,
             view: true,
-          }
-        }
+          },
+        },
       },
     });
 
@@ -153,12 +191,7 @@ export async function getPost(req, res) {
  */
 export async function addPost(req, res) {
   const body = req.body;
-  const postDetails = req.body.others;
   const tokenId = req.user.id;
-
-  const postDescription = postDetails?.description[0];
-
-  const sanitizeHtml = sanitize(postDescription);
 
   try {
     const newPost = await prisma.post.create({

@@ -11,18 +11,22 @@ import email from "./routes/email.js";
 import express from "express";
 import timeout from "connect-timeout";
 import cors from "cors";
-import http from 'http';
+import http from "http";
 
 import cookieParser from "cookie-parser";
 import { WebSocketServer } from "ws";
+import prisma from "./lib/prisma.js";
+import { parse } from "path";
+import { stat } from "fs";
 import { error } from "console";
+import { findOrCreateChat } from "./utils/chat.js";
 
 const PORT = 7000;
 const app = express();
 const allowedOrigins = [process.env.DEV_CORS_URL, process.env.PROD_CORS_URL];
 
 const server = http.createServer(app);
-const wss = new WebSocketServer({ server })
+const wss = new WebSocketServer({ server });
 
 //app.use(timeout("10s"));
 app.use(cookieParser(process.env.TOKEN_SECRET));
@@ -49,8 +53,25 @@ app.use("/api/message", message);
 app.use("/api/save-post", save);
 app.use("/email", email);
 
+let userId;
 app.get("/", (req, res) => {
   res.send("Welcome to the homepage");
+});
+
+//create a websocket connection
+wss.on("connection", (ws) => {
+  console.log("connected...");
+
+  // receive message from the client
+  ws.on("message", async (message) => {
+    const parseMessage = JSON.parse(message.toString());
+    
+    const { userId, receiverId, text } = parseMessage;
+    const newMessage = await findOrCreateChat(userId, receiverId, text);
+
+    // send message to the client
+    ws.send(JSON.stringify(newMessage));
+  });
 });
 
 function haltRequestOnTimeout(req, res, next) {
@@ -66,34 +87,6 @@ app.use((err, req, res, next) => {
   return res.status(503).json({ success: false, message: "request timeout" });
   //.send("An unexpected error occurred. Please try again later.");
 });
-
-wss.on('connection', (ws) => {
-  console.log('Client connected');
-
- ws.on('message', (message) => {
-  const decodeMessage = message.toString();
-  console.log('Receiving message ', decodeMessage);
-  
-  wss.clients.forEach((client) => {
-    if (client.readyState === ws.OPEN){
-      client.send(decodeMessage);
-    }
-  })
- })
-
- ws.on("error", (error) => {
-  console.error('Client error ', error);
- })
-
- ws.on('close', () => {
-  console.log('Client disconnected')
- })
-})
-
-wss.on("error", (err) => {
-  console.log("WebSocket server error ", error);
-})
-
 
 server.listen(PORT, () => {
   console.log("Server starting at " + PORT);
