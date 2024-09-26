@@ -35,6 +35,7 @@ export async function findOrCreateChat(senderId, receiverId, text) {
         chatId: findChat.id,
         text,
         senderId,
+        receiverId,
       },
     });
     return newMessage;
@@ -43,25 +44,4 @@ export async function findOrCreateChat(senderId, receiverId, text) {
       console.log(error);
     }
   }
-}
-
-/**
- * 
- * @param {String} chatId 
- * @returns object
- * @description get all messages from a chat
- */
-export async function getAllMessages(chatId) {
-    try{
-        const messages = await prisma.messages.findMany({
-            where: {
-                chatId
-            }
-        });
-        console.log(messages);
-        return messages
-    }catch(error){
-        console.log(error);
-    }
-    
 }

@@ -19,7 +19,7 @@ import prisma from "./lib/prisma.js";
 import { parse } from "path";
 import { stat } from "fs";
 import { error } from "console";
-import { findOrCreateChat, getAllMessages } from "./utils/chat.js";
+import { findOrCreateChat } from "./utils/chat.js";
 
 const PORT = 7000;
 const app = express();
@@ -53,33 +53,24 @@ app.use("/api/message", message);
 app.use("/api/save-post", save);
 app.use("/email", email);
 
+let userId;
 app.get("/", (req, res) => {
   res.send("Welcome to the homepage");
 });
 
-let usersChat;
-// create websocket connection
-wss.on("connection", async (ws) => {
-  // handle any websocket errors
-  let mText = "";
+//create a websocket connection
+wss.on("connection", (ws) => {
   console.log("connected...");
 
-  // receive the message from client
+  // receive message from the client
   ws.on("message", async (message) => {
-    if (message) {
-      usersChat = JSON.parse(message.toString());
-      console.log(usersChat);
-    }
-    if (usersChat) {
-      const { userId, receiverId, text } = usersChat;
-      // find or create new chat
-      const chat = await findOrCreateChat(userId, receiverId, text);
-      if (chat) {
-        // get all messages from chat
-        const messages = await getAllMessages(chat.chatId);
-        ws.send(JSON.stringify(messages));
-      }
-    }
+    const parseMessage = JSON.parse(message.toString());
+    
+    const { userId, receiverId, text } = parseMessage;
+    const newMessage = await findOrCreateChat(userId, receiverId, text);
+
+    // send message to the client
+    ws.send(JSON.stringify(newMessage));
   });
 });
 

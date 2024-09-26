@@ -12,12 +12,14 @@ import {
   updatePost,
   deleteAllPost,
   getAmenities,
+  getUserPost,
 } from "../controllers/post.controller.js";
 
 const router = express.Router();
 
 router.get("/", getPosts);
 router.get("/:id", getPost);
+router.get('/user/:userId', userAuthorization, getUserPost);
 router.post("/", userAuthorization, addPost);
 router.delete("/:id", userAuthorization, deletePost);
 router.patch("/:id", userAuthorization, updatePost);
