@@ -2,10 +2,6 @@
 
 import prisma from "../lib/prisma.js";
 import jwt from "jsonwebtoken";
-import { marked } from "marked";
-import sanitize from "sanitize-html";
-
-import { Type, Property } from "@prisma/client";
 
 /**
  *
@@ -59,7 +55,7 @@ export async function getUserPost(req, res) {
   const tokenId = req.user.id;
   const param = req.params.userId;
 
-  console.log(tokenId)
+  console.log(tokenId);
 
   try {
     const user = await prisma.user.findUnique({
@@ -196,8 +192,57 @@ export async function addPost(req, res) {
   try {
     const newPost = await prisma.post.create({
       data: {
-        ...body,
+        title: body.title,
+        price: body.price,
+        address: body.address,
+        city: body.city,
+        longitude: body.longitude,
+        latitude: body.latitude,
+        bedroom: body.bedroom,
+        bathroom: body.bathroom,
+        unitArea: body.unitArea,
+        type: body.type,
+        property: body.property,
+        description: body.description,
+        images: body.images,
         userId: tokenId,
+        amenities: {
+          create: {
+            roomDetails: {
+              create: {
+                appliances: body.amenities.roomDetails.appliance,
+                basement: body.amenities.roomDetails.basement,
+                floorCovering: body.amenities.roomDetails.floorCovering,
+                rooms: body.amenities.roomDetails.rooms,
+                indoorFeatures: body.amenities.roomDetails.indoorFeatures,
+              },
+            },
+            utilitiesDetails: {
+              create: {
+                coolingType: body.amenities.utilitiesDetails.coolingType,
+                heatingType: body.amenities.utilitiesDetails.heatingType,
+                heatingFuel: body.amenities.utilitiesDetails.heatingFuel,
+              },
+            },
+            buildingDetails: {
+              create: {
+                buildingAmenities:
+                  body.amenities.buildingDetails.buildingAmenities,
+                architecturalStyle:
+                  body.amenities.buildingDetails.architecturalStyle,
+                exterior: body.amenities.buildingDetails.exterior,
+                numUnit: body.amenities.buildingDetails.numUnit,
+                numFloor: body.amenities.buildingDetails.numFloor,
+                outdoorAmenities:
+                  body.amenities.buildingDetails.outdoorAmenities,
+                parking: body.amenities.buildingDetails.parking,
+                parkingSpace: body.amenities.buildingDetails.parkingSpace,
+                view: body.amenities.buildingDetails.view,
+                roof: body.amenities.buildingDetails.roof,
+              },
+            },
+          },
+        },
       },
     });
     res.status(201).json({ success: true, newPost });

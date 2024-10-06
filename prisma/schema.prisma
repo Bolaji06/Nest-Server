@@ -36,17 +36,17 @@ enum Property {
 enum Design {
   bungalow
   cape_Code
-  Colonial
-  Contemporary
-  Craftsman
-  French
-  Georgian
-  Loft
-  Modern
+  colonial
+  contemporary
+  craftsman
+  french
+  georgian
+  loft
+  modern
   queen_anne
   ranch
   pueblo_style
-  Spanish
+  spanish
   split_level
   tudor
   other
