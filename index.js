@@ -65,7 +65,7 @@ wss.on("connection", (ws) => {
   // receive message from the client
   ws.on("message", async (message) => {
     const parseMessage = JSON.parse(message.toString());
-    
+
     const { userId, receiverId, text } = parseMessage;
     const newMessage = await findOrCreateChat(userId, receiverId, text);
 
