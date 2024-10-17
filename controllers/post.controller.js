@@ -101,6 +101,10 @@ export async function getPost(req, res) {
       },
     });
 
+    if (!post){
+      return res.status(404).json({ success: false, message: 'post not found'})
+    }
+
     const amenities = await prisma.amenities.findUnique({
       where: {
         postId: post.id,
@@ -169,7 +173,7 @@ export async function getPost(req, res) {
         .json({ success: true, message: { post, amenities } });
     }
   } catch (err) {
-    res.status(500).json({ success: false, message: "internal server error" });
+    return res.status(500).json({ success: false, message: "internal server error" });
   }
 }
 //add post
