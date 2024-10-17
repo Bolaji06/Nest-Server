@@ -173,7 +173,7 @@ export async function getPost(req, res) {
         .json({ success: true, message: { post, amenities } });
     }
   } catch (err) {
-    return res.status(500).json({ success: false, message: "internal server error" });
+    return res.status(500).json({ success: false, message: "internal server error" }); // return
   }
 }
 //add post
