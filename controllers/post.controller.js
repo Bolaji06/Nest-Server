@@ -350,7 +350,9 @@ export async function deletePost(req, res) {
  */
 export async function deleteAllPost(req, res) {
   try {
-    const post = await prisma.post.deleteMany();
-    res.status(200).json({ message: true, post });
-  } catch (err) {}
+    await prisma.post.deleteMany();
+    res.status(200).json({ message: true, message: 'all post deleted' });
+  } catch (err) {
+    return res.status(500).json({ success: false, message: 'internal server error' });
+  }
 }
