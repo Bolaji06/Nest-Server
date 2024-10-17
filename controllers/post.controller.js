@@ -14,8 +14,6 @@ export async function getPosts(req, res) {
 
   try {
     if (query.title) {
-      console.log(query.title);
-
       const searchPost = await prisma.post.findMany({
         where: {
           title: {
@@ -41,7 +39,6 @@ export async function getPosts(req, res) {
     });
     res.status(200).json({ success: true, message: post });
   } catch (err) {
-    console.log(err);
     res.status(500).json({ success: false, message: "internal server error" });
   }
 }
@@ -54,8 +51,6 @@ export async function getPosts(req, res) {
 export async function getUserPost(req, res) {
   const tokenId = req.user.id;
   const param = req.params.userId;
-
-  console.log(tokenId);
 
   try {
     const user = await prisma.user.findUnique({
@@ -76,7 +71,6 @@ export async function getUserPost(req, res) {
     return res.status(200).json({ success: true, userPosts });
   } catch (error) {
     if (error instanceof error) {
-      console.log(error);
       return res
         .status(500)
         .json({ success: false, message: "internal server error" });
@@ -175,7 +169,6 @@ export async function getPost(req, res) {
         .json({ success: true, message: { post, amenities } });
     }
   } catch (err) {
-    console.log(err);
     res.status(500).json({ success: false, message: "internal server error" });
   }
 }
@@ -247,7 +240,6 @@ export async function addPost(req, res) {
     });
     res.status(201).json({ success: true, newPost });
   } catch (err) {
-    console.log(err);
     res.status(500).json({ success: false, message: "internal server error" });
   }
 }
@@ -347,7 +339,6 @@ export async function deletePost(req, res) {
       .status(200)
       .json({ success: true, message: "post deleted successfully" });
   } catch (err) {
-    console.log(err);
     res.status(500).json({ success: false, message: "internal server error" });
   }
 }
@@ -359,9 +350,9 @@ export async function deletePost(req, res) {
  */
 export async function deleteAllPost(req, res) {
   try {
-    const post = await prisma.post.deleteMany();
-    res.status(200).json({ message: true, post });
+    await prisma.post.deleteMany();
+    res.status(200).json({ message: true, message: 'all post deleted' });
   } catch (err) {
-    console.log(err);
+    return res.status(500).json({ success: false, message: 'internal server error' });
   }
 }

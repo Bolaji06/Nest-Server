@@ -141,7 +141,7 @@ model BuildingDetails {
   amenities             Amenities?  @relation(fields: [amenitiesId], references: [id])
   amenitiesId           String @unique @db.ObjectId
   buildingAmenities     String[]
-  architecturalStyle    Design
+  architecturalStyle    String
   exterior              String[]
   numUnit               Int
   numFloor              Int
