@@ -23,7 +23,11 @@ import { findOrCreateChat } from "./utils/chat.js";
 
 const PORT = 7000;
 const app = express();
-const allowedOrigins = [process.env.DEV_CORS_URL, process.env.PROD_CORS_URL];
+const allowedOrigins = [
+  process.env.DEV_CORS_URL,
+  process.env.PROD_CORS_URL,
+  process.env.PROD_SERVER_URL,
+];
 
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
