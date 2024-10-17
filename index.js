@@ -9,16 +9,11 @@ import save from "./routes/save_post.js";
 import email from "./routes/email.js";
 
 import express from "express";
-import timeout from "connect-timeout";
 import cors from "cors";
 import http from "http";
 
 import cookieParser from "cookie-parser";
 import { WebSocketServer } from "ws";
-import prisma from "./lib/prisma.js";
-import { parse } from "path";
-import { stat } from "fs";
-import { error } from "console";
 import { findOrCreateChat } from "./utils/chat.js";
 
 const PORT = 7000;
