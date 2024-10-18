@@ -119,8 +119,8 @@ export function sendListingEmail(image, id, sender, receiver, message, post) {
     </mj-section>
 
     <mj-section background-color="#ffffff">
-      <mj-column>
-        <mj-button background-color="#4CAF50" color="white" href="http://localhost:3000/home-details/${id}">
+      <mj-column>     
+        <mj-button background-color="#4CAF50" color="white" href="https://nest-black-five.vercel.app/home-details/${id}">
           View Full Listing
         </mj-button>
       </mj-column>
@@ -138,7 +138,7 @@ export function sendListingEmail(image, id, sender, receiver, message, post) {
         </mj-text>
       </mj-column>
        <mj-column width="100%">
-        <mj-image src="https://firebasestorage.googleapis.com/v0/b/nest-773db.appspot.com/o/public%2Fnest-logo.png?alt=media&token=7b74767c-62c5-4512-871a-f29d8b8a2577" alt="Beautiful House" />
+        <mj-image src="https://firebasestorage.googleapis.com/v0/b/nest-773db.appspot.com/o/public%2Fnest-logo.png?alt=media&token=7b74767c-62c5-4512-871a-f29d8b8a2577" alt="Nest Logo" />
       </mj-column>
     </mj-section>
 

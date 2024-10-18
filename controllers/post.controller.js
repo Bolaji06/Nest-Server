@@ -250,8 +250,9 @@ export async function addPost(req, res) {
 
 /**
  *
- * @param {import("express").Request} req
- * @param {import("express").Response} res
+ * @param {import("express").Request} req The request object
+ * @param {import("express").Response} res The response object
+ * @description get amenities by id
  */
 export async function getAmenities(req, res) {
   const { id } = req.params;
