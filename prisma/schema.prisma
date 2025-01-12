@@ -109,7 +109,7 @@ model Post {
 
 model Amenities {
   id                    String @id @default(auto()) @map("_id") @db.ObjectId
-  post                  Post @relation(fields: [postId], references: [id])
+  post                  Post @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId                String @unique @db.ObjectId
   roomDetails           RoomDetails?
   utilitiesDetails      UtilitiesDetails?
@@ -118,7 +118,7 @@ model Amenities {
 
 model RoomDetails {
   id                    String @id @default(auto()) @map("_id") @db.ObjectId
-  amenities             Amenities  @relation(fields: [amenitiesId], references: [id])
+  amenities             Amenities  @relation(fields: [amenitiesId], references: [id], onDelete: Cascade)
   amenitiesId           String @unique @db.ObjectId
   appliances            String[]
   basement              Basement?
@@ -129,7 +129,7 @@ model RoomDetails {
 
 model UtilitiesDetails {
   id                    String @id @default(auto()) @map("_id") @db.ObjectId
-  amenities             Amenities?  @relation(fields: [amenitiesId], references: [id])
+  amenities             Amenities?  @relation(fields: [amenitiesId], references: [id], onDelete: Cascade)
   amenitiesId           String @unique @db.ObjectId
   coolingType           String[]
   heatingType           String[]
@@ -138,7 +138,7 @@ model UtilitiesDetails {
 
 model BuildingDetails {
   id                    String @id @default(auto()) @map("_id") @db.ObjectId
-  amenities             Amenities?  @relation(fields: [amenitiesId], references: [id])
+  amenities             Amenities?  @relation(fields: [amenitiesId], references: [id], onDelete: Cascade)
   amenitiesId           String @unique @db.ObjectId
   buildingAmenities     String[]
   architecturalStyle    String
